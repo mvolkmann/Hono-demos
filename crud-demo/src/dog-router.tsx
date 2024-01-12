@@ -13,6 +13,8 @@ interface Dog extends NewDog {
 }
 
 let lastId = 0;
+
+// The dogs are maintained in memory.
 const dogMap: {[id: number]: Dog} = {};
 
 function addDog(name: string, breed: string): Dog {
@@ -25,6 +27,7 @@ function addDog(name: string, breed: string): Dog {
 addDog('Comet', 'Whippet');
 addDog('Oscar', 'German Shorthaired Pointer');
 
+// This provides HTML boilerplate for any page.
 const Layout: FC = props => {
   return (
     <html>
@@ -37,6 +40,8 @@ const Layout: FC = props => {
   );
 };
 
+// This returns JSX for a page that
+// list the dogs passed in a prop.
 const DogPage: FC = ({dogs}) => {
   const title = 'Dogs I Know';
   return (
@@ -53,6 +58,7 @@ const DogPage: FC = ({dogs}) => {
   );
 };
 
+// This gets all the dogs as either JSON or HTML.
 router.get('/', (c: Context) => {
   const accept = c.req.header('Accept');
   if (accept && accept.includes('application/json')) {
@@ -65,6 +71,7 @@ router.get('/', (c: Context) => {
   return c.html(<DogPage dogs={dogs} />);
 });
 
+// This gets one dog by its id as JSON.
 router.get('/:id', (c: Context) => {
   const id = Number(c.req.param('id'));
   const dog = dogMap[id];
@@ -72,12 +79,14 @@ router.get('/:id', (c: Context) => {
   return c.json(dog);
 });
 
+// This creates a new dog.
 router.post('/', async (c: Context) => {
   const data = (await c.req.json()) as unknown as NewDog;
   const dog = addDog(data.name, data.breed);
   return c.json(dog);
 });
 
+// This updates the dog with a given id.
 router.put('/:id', async (c: Context) => {
   const id = Number(c.req.param('id'));
   const data = (await c.req.json()) as unknown as NewDog;
@@ -90,6 +99,7 @@ router.put('/:id', async (c: Context) => {
   return c.json(dog);
 });
 
+// This deletes the dog with a given id.
 router.delete('/:id', async (c: Context) => {
   const id = Number(c.req.param('id'));
   const dog = dogMap[id];

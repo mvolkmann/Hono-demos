@@ -1,3 +1,6 @@
+// This tests all the CRUD functionality.
+// To run all the tests, enter `bun test`.
+
 import {describe, expect, it} from 'bun:test';
 import app from '.';
 
