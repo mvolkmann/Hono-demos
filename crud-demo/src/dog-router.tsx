@@ -1,4 +1,5 @@
 import {Hono, type Context} from 'hono';
+import type {FC} from 'hono/jsx';
 
 const router = new Hono();
 
@@ -12,45 +13,61 @@ interface Dog extends NewDog {
 }
 
 let lastId = 0;
-const dogs: {[id: number]: Dog} = {};
+const dogMap: {[id: number]: Dog} = {};
 
 function addDog(name: string, breed: string): Dog {
   const id = ++lastId;
   const dog = {id, name, breed};
-  dogs[id] = dog;
+  dogMap[id] = dog;
   return dog;
 }
 
 addDog('Comet', 'Whippet');
 addDog('Oscar', 'German Shorthaired Pointer');
 
+const Layout: FC = props => {
+  return (
+    <html>
+      <head>
+        <link rel="stylesheet" href="/styles.css" />
+        <title>{props.title}</title>
+      </head>
+      <body>{props.children}</body>
+    </html>
+  );
+};
+
+const DogPage: FC = ({dogs}) => {
+  const title = 'Dogs I Know';
+  return (
+    <Layout title={title}>
+      <h1>{title}</h1>
+      <ul>
+        {dogs.map((dog: Dog) => (
+          <li>
+            {dog.name} is a {dog.breed}.
+          </li>
+        ))}
+      </ul>
+    </Layout>
+  );
+};
+
 router.get('/', (c: Context) => {
-  // TODO: Check the accept header and return HTML if requested.
   const accept = c.req.raw.headers.get('Accept');
-  console.log('dog-router.ts : accept =', accept);
   if (accept && accept.includes('application/json')) {
-    return c.json(dogs);
+    return c.json(dogMap);
   }
 
-  const list = Object.values(dogs).sort((a, b) => a.name.localeCompare(b.name));
-  console.log('index.ts html: list =', list);
-  /*
-  return c.html(
-    <ul>
-      {list.map(dog => (
-        <li>
-          {dog.name} is a {dog.breed}.
-        </li>
-      ))}
-    </ul>
+  const dogs = Object.values(dogMap).sort((a, b) =>
+    a.name.localeCompare(b.name)
   );
-  */
-  return c.html('<h1>hello</h1>');
+  return c.html(<DogPage dogs={dogs} />);
 });
 
 router.get('/:id', (c: Context) => {
   const id = Number(c.req.param('id'));
-  const dog = dogs[id];
+  const dog = dogMap[id];
   c.status(dog ? 200 : 404);
   return c.json(dog);
 });
@@ -64,7 +81,7 @@ router.post('/', async (c: Context) => {
 router.put('/:id', async (c: Context) => {
   const id = Number(c.req.param('id'));
   const data = (await c.req.json()) as unknown as NewDog;
-  const dog = dogs[id];
+  const dog = dogMap[id];
   if (dog) {
     dog.name = data.name;
     dog.breed = data.breed;
@@ -75,8 +92,8 @@ router.put('/:id', async (c: Context) => {
 
 router.delete('/:id', async (c: Context) => {
   const id = Number(c.req.param('id'));
-  const dog = dogs[id];
-  if (dog) delete dogs[id];
+  const dog = dogMap[id];
+  if (dog) delete dogMap[id];
   c.status(dog ? 200 : 404);
   return c.text('');
 });
