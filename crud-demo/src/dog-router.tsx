@@ -54,7 +54,7 @@ const DogPage: FC = ({dogs}) => {
 };
 
 router.get('/', (c: Context) => {
-  const accept = c.req.raw.headers.get('Accept');
+  const accept = c.req.header('Accept');
   if (accept && accept.includes('application/json')) {
     return c.json(dogMap);
   }
