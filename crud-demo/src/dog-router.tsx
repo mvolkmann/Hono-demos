@@ -73,9 +73,7 @@ router.get('/:id', (c: Context) => {
 });
 
 router.post('/', async (c: Context) => {
-  console.log('dog-router.tsx post: entered');
   const data = (await c.req.json()) as unknown as NewDog;
-  console.log('dog-router.tsx post: data =', data);
   const dog = addDog(data.name, data.breed);
   return c.json(dog);
 });
