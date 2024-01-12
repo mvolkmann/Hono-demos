@@ -1,5 +1,7 @@
 import {Hono, type Context} from 'hono';
 import type {FC} from 'hono/jsx';
+import {validator} from 'hono/validator';
+import {zValidator} from '@hono/zod-validator';
 
 const router = new Hono();
 
@@ -72,12 +74,25 @@ router.get('/', (c: Context) => {
 });
 
 // This gets one dog by its id as JSON.
-router.get('/:id', (c: Context) => {
-  const id = Number(c.req.param('id'));
-  const dog = dogMap[id];
-  c.status(dog ? 200 : 404);
-  return c.json(dog);
-});
+router.get(
+  '/:id',
+  validator('param', (value: any, c: Context) => {
+    const {id} = value;
+    console.log('dog-router.tsx : id =', id);
+    console.log('dog-router.tsx : typeof id =', typeof id);
+    if (typeof value !== 'number') {
+      // TODO: WHy doesn't this stop the request?
+      return c.text('must be a number', 400);
+    }
+    return value;
+  }),
+  (c: Context) => {
+    const id = Number(c.req.param('id'));
+    const dog = dogMap[id];
+    c.status(dog ? 200 : 404);
+    return c.json(dog);
+  }
+);
 
 // This creates a new dog.
 router.post('/', async (c: Context) => {
