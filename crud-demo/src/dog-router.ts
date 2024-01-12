@@ -26,8 +26,14 @@ addDog('Oscar', 'German Shorthaired Pointer');
 
 router.get('/', (c: Context) => {
   // TODO: Check the accept header and return HTML if requested.
-  // const list = Object.values(dogs).sort((a, b) => a.name.localeCompare(b.name));
-  // console.log('index.ts html: list =', list);
+  const accept = c.req.raw.headers.get('Accept');
+  console.log('dog-router.ts : accept =', accept);
+  if (accept && accept.includes('application/json')) {
+    return c.json(dogs);
+  }
+
+  const list = Object.values(dogs).sort((a, b) => a.name.localeCompare(b.name));
+  console.log('index.ts html: list =', list);
   /*
   return c.html(
     <ul>
@@ -39,9 +45,7 @@ router.get('/', (c: Context) => {
     </ul>
   );
   */
-  // return c.html('<h1>hello</h1>');
-
-  return c.json(dogs);
+  return c.html('<h1>hello</h1>');
 });
 
 router.get('/:id', (c: Context) => {
