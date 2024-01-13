@@ -9,6 +9,7 @@ const getAllClient = hc<GetAllType>(URL_PREFIX);
 const updateClient = hc<UpdateType>(URL_PREFIX);
 
 async function demo() {
+  // Create a dog.
   let res = await createClient.dog.$post(
     {
       json: {
@@ -23,6 +24,17 @@ async function demo() {
     }
   );
 
+  // Update a dog.
+  res = await updateClient.dog.$put({
+    id: 1,
+    name: 'Fireball',
+    breed: 'Greyhound'
+  });
+
+  // Delete a dog.
+  res = await deleteClient.dog.$delete({id: 2});
+
+  // Get all the dogs.
   res = await getAllClient.dog.$get(
     {},
     {
@@ -33,20 +45,6 @@ async function demo() {
   );
   const dogs = await res.json();
   console.log('client.ts demo: dogs =', dogs);
-
-  // TODO: Get this working.
-  res = await updateClient.dogs.$put({
-    id: 1,
-    name: 'Fireball',
-    breed: 'Greyhound'
-  });
-
-  // TODO: Get this working.
-  res = await deleteClient.dogs.$put({
-    id: 1,
-    name: 'Fireball',
-    breed: 'Greyhound'
-  });
 }
 
 demo();

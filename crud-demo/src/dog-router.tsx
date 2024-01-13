@@ -78,7 +78,7 @@ const idSchema = z.object({
   id: z.coerce.number()
 });
 const idValidator = zValidator('param', idSchema);
-router.get('/:id', idValidator, (c: Context) => {
+const getOneRoute = router.get('/:id', idValidator, (c: Context) => {
   const id = Number(c.req.param('id'));
   const dog = dogMap[id];
   c.status(dog ? 200 : 404);
@@ -113,6 +113,7 @@ const updateRoute = router.put(
       dog.name = data.name;
       dog.breed = data.breed;
     }
+    console.log('dog-router.tsx updated: dog =', dog);
     c.status(dog ? 200 : 404);
     return c.json(dog);
   }
@@ -123,6 +124,7 @@ const deleteRoute = router.delete('/:id', idValidator, async (c: Context) => {
   const id = Number(c.req.param('id'));
   const dog = dogMap[id];
   if (dog) delete dogMap[id];
+  console.log('dog-router.tsx deleted: dog =', dog);
   c.status(dog ? 200 : 404);
   return c.text('');
 });
@@ -131,4 +133,5 @@ export default router;
 export type CreateType = typeof createRoute;
 export type DeleteType = typeof deleteRoute;
 export type GetAllType = typeof getAllRoute;
+export type GetOneType = typeof getOneRoute;
 export type UpdateType = typeof updateRoute;
