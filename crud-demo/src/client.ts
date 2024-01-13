@@ -7,6 +7,13 @@ const createClient = hc<CreateType>(URL_PREFIX);
 const deleteClient = hc<DeleteType>(URL_PREFIX);
 const getAllClient = hc<GetAllType>(URL_PREFIX);
 const updateClient = hc<UpdateType>(URL_PREFIX);
+/* What benefit do the route types provide?
+   This code runs fine without them.
+const createClient = hc(URL_PREFIX);
+const deleteClient = hc(URL_PREFIX);
+const getAllClient = hc(URL_PREFIX);
+const updateClient = hc(URL_PREFIX);
+*/
 
 async function demo() {
   // Create a dog.
