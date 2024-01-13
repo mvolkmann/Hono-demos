@@ -72,7 +72,6 @@ const getAllRoute = router.get('/', (c: Context) => {
   );
   return c.html(<DogPage dogs={dogs} />);
 });
-export type GetAllType = typeof getAllRoute;
 
 // This gets one dog by its id as JSON.
 const idSchema = z.object({
@@ -94,7 +93,7 @@ const dogSchema = z
   })
   .strict(); // no extra properties allowed
 const dogValidator = zValidator('json', dogSchema);
-router.post('/', dogValidator, async (c: Context) => {
+const createRoute = router.post('/', dogValidator, async (c: Context) => {
   const data = (await c.req.json()) as unknown as NewDog;
   const dog = addDog(data.name, data.breed);
   c.status(201);
@@ -118,10 +117,9 @@ const updateRoute = router.put(
     return c.json(dog);
   }
 );
-export type UpdateType = typeof updateRoute;
 
 // This deletes the dog with a given id.
-router.delete('/:id', idValidator, async (c: Context) => {
+const deleteRoute = router.delete('/:id', idValidator, async (c: Context) => {
   const id = Number(c.req.param('id'));
   const dog = dogMap[id];
   if (dog) delete dogMap[id];
@@ -130,3 +128,7 @@ router.delete('/:id', idValidator, async (c: Context) => {
 });
 
 export default router;
+export type CreateType = typeof createRoute;
+export type DeleteType = typeof deleteRoute;
+export type GetAllType = typeof getAllRoute;
+export type UpdateType = typeof updateRoute;
