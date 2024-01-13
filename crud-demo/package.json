@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "client": "bun run src/client.ts",
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {

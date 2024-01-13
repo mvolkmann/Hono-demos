@@ -61,7 +61,7 @@ const DogPage: FC = ({dogs}) => {
 };
 
 // This gets all the dogs as either JSON or HTML.
-router.get('/', (c: Context) => {
+const getAllRoute = router.get('/', (c: Context) => {
   const accept = c.req.header('Accept');
   if (accept && accept.includes('application/json')) {
     return c.json(dogMap);
@@ -72,6 +72,7 @@ router.get('/', (c: Context) => {
   );
   return c.html(<DogPage dogs={dogs} />);
 });
+export type GetAllType = typeof getAllRoute;
 
 // This gets one dog by its id as JSON.
 const idSchema = z.object({
@@ -96,21 +97,28 @@ const dogValidator = zValidator('json', dogSchema);
 router.post('/', dogValidator, async (c: Context) => {
   const data = (await c.req.json()) as unknown as NewDog;
   const dog = addDog(data.name, data.breed);
+  c.status(201);
   return c.json(dog);
 });
 
 // This updates the dog with a given id.
-router.put('/:id', idValidator, async (c: Context) => {
-  const id = Number(c.req.param('id'));
-  const data = (await c.req.json()) as unknown as NewDog;
-  const dog = dogMap[id];
-  if (dog) {
-    dog.name = data.name;
-    dog.breed = data.breed;
+const updateRoute = router.put(
+  '/:id',
+  idValidator,
+  dogValidator,
+  async (c: Context) => {
+    const id = Number(c.req.param('id'));
+    const data = (await c.req.json()) as unknown as NewDog;
+    const dog = dogMap[id];
+    if (dog) {
+      dog.name = data.name;
+      dog.breed = data.breed;
+    }
+    c.status(dog ? 200 : 404);
+    return c.json(dog);
   }
-  c.status(dog ? 200 : 404);
-  return c.json(dog);
-});
+);
+export type UpdateType = typeof updateRoute;
 
 // This deletes the dog with a given id.
 router.delete('/:id', idValidator, async (c: Context) => {

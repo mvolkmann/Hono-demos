@@ -36,18 +36,21 @@ describe('dog endpoints', () => {
     expect(res.status).toBe(200);
   });
 
-  it('should add a dog', async () => {
+  it('should create a dog', async () => {
     const dog = {
       name: 'Ramsay',
       breed: 'Native American Indian Dog'
     };
     const req = new Request(URL_PREFIX, {
       method: 'POST',
-      body: JSON.stringify(dog)
+      body: JSON.stringify(dog),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     const res = await app.fetch(req);
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(201);
     const newDog = await res.json();
 
     // Verify that the dog was added.
@@ -64,7 +67,10 @@ describe('dog endpoints', () => {
     };
     const req = new Request(URL_PREFIX + '/1', {
       method: 'PUT',
-      body: JSON.stringify(dog)
+      body: JSON.stringify(dog),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
     const res = await app.fetch(req);
 
