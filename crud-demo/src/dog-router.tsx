@@ -1,6 +1,6 @@
 import {Hono, type Context} from 'hono';
 import type {FC} from 'hono/jsx';
-import {validator} from 'hono/validator';
+import {z} from 'zod';
 import {zValidator} from '@hono/zod-validator';
 
 const router = new Hono();
@@ -74,35 +74,33 @@ router.get('/', (c: Context) => {
 });
 
 // This gets one dog by its id as JSON.
-router.get(
-  '/:id',
-  validator('param', (value: any, c: Context) => {
-    const {id} = value;
-    console.log('dog-router.tsx : id =', id);
-    console.log('dog-router.tsx : typeof id =', typeof id);
-    if (typeof value !== 'number') {
-      // TODO: WHy doesn't this stop the request?
-      return c.text('must be a number', 400);
-    }
-    return value;
-  }),
-  (c: Context) => {
-    const id = Number(c.req.param('id'));
-    const dog = dogMap[id];
-    c.status(dog ? 200 : 404);
-    return c.json(dog);
-  }
-);
+const idSchema = z.object({
+  id: z.coerce.number()
+});
+const idValidator = zValidator('param', idSchema);
+router.get('/:id', idValidator, (c: Context) => {
+  const id = Number(c.req.param('id'));
+  const dog = dogMap[id];
+  c.status(dog ? 200 : 404);
+  return c.json(dog);
+});
 
 // This creates a new dog.
-router.post('/', async (c: Context) => {
+const dogSchema = z
+  .object({
+    name: z.string().min(1),
+    breed: z.string().min(2)
+  })
+  .strict(); // no extra properties allowed
+const dogValidator = zValidator('json', dogSchema);
+router.post('/', dogValidator, async (c: Context) => {
   const data = (await c.req.json()) as unknown as NewDog;
   const dog = addDog(data.name, data.breed);
   return c.json(dog);
 });
 
 // This updates the dog with a given id.
-router.put('/:id', async (c: Context) => {
+router.put('/:id', idValidator, async (c: Context) => {
   const id = Number(c.req.param('id'));
   const data = (await c.req.json()) as unknown as NewDog;
   const dog = dogMap[id];
@@ -115,7 +113,7 @@ router.put('/:id', async (c: Context) => {
 });
 
 // This deletes the dog with a given id.
-router.delete('/:id', async (c: Context) => {
+router.delete('/:id', idValidator, async (c: Context) => {
   const id = Number(c.req.param('id'));
   const dog = dogMap[id];
   if (dog) delete dogMap[id];
