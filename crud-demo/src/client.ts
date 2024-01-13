@@ -25,14 +25,17 @@ async function demo() {
   );
 
   // Update a dog.
-  res = await updateClient.dog.$put({
-    id: 1,
-    name: 'Fireball',
-    breed: 'Greyhound'
+  res = await updateClient.dog[':id'].$put({
+    param: {id: 1},
+    json: {
+      // id: 1,
+      name: 'Fireball',
+      breed: 'Greyhound'
+    }
   });
 
   // Delete a dog.
-  res = await deleteClient.dog.$delete({id: 2});
+  res = await deleteClient.dog[':id'].$delete({param: {id: 2}});
 
   // Get all the dogs.
   res = await getAllClient.dog.$get(

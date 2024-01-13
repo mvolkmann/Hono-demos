@@ -75,7 +75,7 @@ const getAllRoute = router.get('/', (c: Context) => {
 
 // This gets one dog by its id as JSON.
 const idSchema = z.object({
-  id: z.coerce.number()
+  id: z.coerce.number().positive()
 });
 const idValidator = zValidator('param', idSchema);
 const getOneRoute = router.get('/:id', idValidator, (c: Context) => {
