@@ -4,6 +4,7 @@ import {hc} from 'hono/client';
 const URL_PREFIX = 'http://localhost:3000/dog';
 
 const getAllClient = hc<GetAllType>(URL_PREFIX);
+// const getAllClient = hc<GetAllType>('/dog');
 
 async function demo() {
   const dogs = await getAllClient.$get(
