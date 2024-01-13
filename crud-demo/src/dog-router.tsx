@@ -88,6 +88,7 @@ const getOneRoute = router.get('/:id', idValidator, (c: Context) => {
 // This creates a new dog.
 const dogSchema = z
   .object({
+    id: z.number().positive().optional(),
     name: z.string().min(1),
     breed: z.string().min(2)
   })
@@ -113,7 +114,6 @@ const updateRoute = router.put(
       dog.name = data.name;
       dog.breed = data.breed;
     }
-    console.log('dog-router.tsx updated: dog =', dog);
     c.status(dog ? 200 : 404);
     return c.json(dog);
   }
@@ -124,7 +124,6 @@ const deleteRoute = router.delete('/:id', idValidator, async (c: Context) => {
   const id = Number(c.req.param('id'));
   const dog = dogMap[id];
   if (dog) delete dogMap[id];
-  console.log('dog-router.tsx deleted: dog =', dog);
   c.status(dog ? 200 : 404);
   return c.text('');
 });
