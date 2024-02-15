@@ -1,12 +1,15 @@
 {
+  "type": "module",
   "scripts": {
-    "dev": "bun run --hot app/server.ts"
+    "dev": "bun run --hot app/server.ts",
+    "reinstall": "rm -rf node_modules bun.lockb && bun install"
   },
   "dependencies": {
     "hono": "^4.0.0",
     "honox": "^0.1.0"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "vite": "^5.1.3"
   }
 }
