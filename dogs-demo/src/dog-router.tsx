@@ -81,8 +81,7 @@ router.put('/:id', async (c: Context) => {
     dog.name = data.name;
     dog.breed = data.breed;
   }
-  c.status(dog ? 200 : 404);
-  return c.json(dog);
+  return dog ? c.json(dog) : c.notFound();
 });
 
 // This deletes the dog with a given id.
@@ -90,8 +89,7 @@ router.delete('/:id', async (c: Context) => {
   const id = Number(c.req.param('id'));
   const dog = dogMap[id];
   if (dog) delete dogMap[id];
-  c.status(dog ? 200 : 404);
-  return c.text('');
+  return dog ? c.text('') : c.notFound();
 });
 
 export default router;
