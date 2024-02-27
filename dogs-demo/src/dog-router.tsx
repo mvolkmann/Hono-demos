@@ -61,15 +61,14 @@ router.get('/', (c: Context) => {
 router.get('/:id', (c: Context) => {
   const id = Number(c.req.param('id'));
   const dog = dogMap[id];
-  c.status(dog ? 200 : 404);
-  return c.json(dog);
+  return dog ? c.json(dog) : c.notFound();
 });
 
 // This creates a new dog.
 router.post('/', async (c: Context) => {
   const data = (await c.req.json()) as unknown as NewDog;
   const dog = addDog(data.name, data.breed);
-  c.status(201);
+  c.status(201); // Created
   return c.json(dog);
 });
 
