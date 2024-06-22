@@ -7,7 +7,7 @@ const app = new Hono();
 // This serves static files from the public directory.
 app.use('/*', serveStatic({root: './public'}));
 
-app.get('/', (c: Context) => c.redirect('/dogs'));
+app.get('/', (c: Context) => c.redirect('/dog'));
 
 app.route('/dog', dogRouter);
 
