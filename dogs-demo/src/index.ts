@@ -9,6 +9,6 @@ app.use('/*', serveStatic({root: './public'}));
 
 app.get('/', (c: Context) => c.redirect('/dogs'));
 
-app.route('/dogs', dogRouter);
+app.route('/dog', dogRouter);
 
 export default app;
