@@ -89,7 +89,7 @@ router.delete('/:id', async (c: Context) => {
   const id = Number(c.req.param('id'));
   const dog = dogMap[id];
   if (dog) delete dogMap[id];
-  return dog ? c.text('') : c.notFound();
+  return dog ? c.body(null) : c.notFound();
 });
 
 export default router;
